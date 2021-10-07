@@ -1,7 +1,6 @@
-local M = {}
+local Path = require("plenary.path")
 
-local api = vim.api
-local finder = require("open-related/finders/telescope")
+local M = {}
 
 M.state = {
   config = {},
@@ -9,7 +8,8 @@ M.state = {
 }
 
 M.setup = function()
-  vim.cmd([[command! OpenRelated lua require('open-related').open_related()]])
+  require("telescope").load_extension("related")
+  vim.cmd([[command! OpenRelated Telescope related]])
 end
 
 local default_options = {
@@ -30,13 +30,8 @@ M.add_relation = function(options)
   )
 end
 
-M.open_related = function()
-  local related = M.find_related(api.nvim_get_current_buf())
-  finder.find(related)
-end
-
 M.find_related = function(bufnr)
-  local ft = api.nvim_buf_get_option(bufnr, "filetype")
+  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
   local related = {}
 
   for _, relation in pairs(M.state.relations) do
@@ -51,7 +46,9 @@ M.find_related = function(bufnr)
     end
   end
 
-  return related
+  return vim.tbl_filter(function(entry)
+    return Path:new(entry.file):exists()
+  end, related)
 end
 
 M.filetype_matches = function(filetypes, ft)

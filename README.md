@@ -9,7 +9,7 @@ want to go to the test file or to the implementation, or go to the header file..
 
 ## Usage
 
-Open relations using vim command `OpenRelated`
+Open relations using vim command `OpenRelated` or `Telescope related`.
 
 ## setup
 
@@ -43,6 +43,7 @@ open_related.add_relation({
 ```
 
 The `related_to` function should return a table of : 
+
 ```lua
 {
     file = "exact/match", -- If present, this is the path from cwd of an expected relation
@@ -117,3 +118,4 @@ This will match : `src/Model/Product.php` <=> `tests/Model/ProductTest.php` and 
  - vimdoc
  - approximative match using ripgrep
  - allow file creation
+ - Support more than telescope
