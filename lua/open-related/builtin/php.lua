@@ -7,13 +7,19 @@ M.alternate_test_file = helpers.make_builtin({
   filetype = { "php" },
   related_to = function(bufnr, opts)
     local matches = {
-      ["^(.*)tests/(.*)Test%.php$"] = "%ssrc/%s.php",
-      ["^(.*)src/(.*)%.php$"] = "%stests/%sTest.php",
+      { match = "^(.*)tests/(.*)Test%.php$", format = "%ssrc/%s.php" },
+      { match = "^(.*)src/(.*)%.php$", format = "%stests/%sTest.php" },
     }
 
     for _, prefix in pairs(opts.test_namespace_prefixes or {}) do
-      matches["^(.*)tests/" .. prefix .. "/(.*)Test%.php$"] = "%ssrc/%s.php"
-      matches["^(.*)src/(.*)%.php$"] = "%stests/" .. prefix .. "/%sTest.php"
+      table.insert(matches, {
+        match = "^(.*)tests/" .. prefix .. "/(.*)Test%.php$",
+        format = "%ssrc/%s.php",
+      })
+      table.insert(matches, {
+        match = "^(.*)src/(.*)%.php$",
+        format = "%stests/" .. prefix .. "/%sTest.php",
+      })
     end
 
     return filename.from_patterns(matches)(bufnr, opts)

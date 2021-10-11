@@ -65,8 +65,8 @@ open_related.add_relation({
     related_to = filename.from_patterns({
         -- This will capture the part before the `.h` (using lua `match` function) 
         -- and apply it to associated pattern (using lua `format` function)
-        ["(.*).h$"] = "%s.cpp",
-        ["(.*).cpp$"] = "%s.h",
+        { match = "(.*).h$", format = "%s.cpp"},
+        { match = "(.*).cpp$", format = "%s.h" },
     }),
 })
 ```
@@ -112,7 +112,6 @@ This will match : `src/Model/Product.php` <=> `tests/Model/ProductTest.php` and 
 
 ## Todo
 
- - Telescope extension
  - Symfony template rule
  - Php dependencies rules
  - vimdoc
