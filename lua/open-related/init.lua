@@ -9,7 +9,10 @@ M.state = {
 
 M.setup = function()
   require("telescope").load_extension("related")
-  vim.cmd([[command! OpenRelated Telescope related]])
+  vim.cmd([[
+    command! OpenRelated Telescope related
+    command! CreateRelated lua require("open-related").create_related()
+  ]])
 end
 
 local default_options = {
@@ -30,7 +33,16 @@ M.add_relation = function(options)
   )
 end
 
-M.find_related = function(bufnr)
+M.find_related = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local related = M._resolve(bufnr)
+
+  return vim.tbl_filter(function(entry)
+    return Path:new(entry.file):exists()
+  end, related)
+end
+
+M._resolve = function(bufnr)
   local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
   local related = {}
 
@@ -46,13 +58,29 @@ M.find_related = function(bufnr)
     end
   end
 
-  return vim.tbl_filter(function(entry)
-    return Path:new(entry.file):exists()
-  end, related)
+  return related
 end
 
 M.filetype_matches = function(filetypes, ft)
   return vim.tbl_isempty(filetypes) or vim.tbl_contains(filetypes, ft)
+end
+
+M.create_related = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local related = M._resolve(bufnr)
+
+  local creatable = vim.tbl_values(vim.tbl_filter(function(entry)
+    return not Path:new(entry.file):exists()
+  end, related))
+
+  local input = {}
+  for index, value in pairs(creatable) do
+    table.insert(input, index .. "." .. value.file)
+  end
+  local choice = vim.fn.inputlist(input)
+
+  Path:new(creatable[choice].file):touch({ parents = true })
+  vim.cmd(string.format("edit %s", creatable[choice].file))
 end
 
 return M

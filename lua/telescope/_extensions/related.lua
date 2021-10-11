@@ -6,9 +6,7 @@ local make_entry = require("telescope.make_entry")
 return telescope.register_extension({
   exports = {
     related = function(opts)
-      local relations = require("open-related").find_related(
-        vim.api.nvim_get_current_buf()
-      )
+      local relations = require("open-related").find_related()
       pickers.new(opts or {}, {
         prompt_title = "Related files",
         finder = finders.new_table({

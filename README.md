@@ -4,12 +4,13 @@ Work in progress, API could change.
 
 ## Motivation
 
-The aim is to quickly open (and create ?) files related to the current one. For example, we
+The aim is to quickly open and create files related to the current one. For example, we
 want to go to the test file or to the implementation, or go to the header file...
 
 ## Usage
 
 Open relations using vim command `OpenRelated` or `Telescope related`.
+Create relations using vim command `CreateRelated`.
 
 ## setup
 
@@ -112,9 +113,10 @@ This will match : `src/Model/Product.php` <=> `tests/Model/ProductTest.php` and 
 
 ## Todo
 
+ - Improve API using metatable
+ - Improve finders (use qf or telescope)
  - Symfony template rule
  - Php dependencies rules
  - vimdoc
  - approximative match using ripgrep
- - allow file creation
  - Support more than telescope
