@@ -4,7 +4,7 @@ local filename = require("open-related.helpers.filename")
 local M = {}
 
 M.alternate_test_file = helpers.make_builtin({
-  filetype = { "php" },
+  filetypes = { "php" },
   related_to = function(bufnr, opts)
     local matches = {
       { match = "^(.*)tests/(.*)Test%.php$", format = "%ssrc/%s.php" },
