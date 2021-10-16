@@ -5,7 +5,7 @@ local make_entry = require("telescope.make_entry")
 
 return telescope.register_extension({
   exports = {
-    related = function(opts)
+    open_related = function(opts)
       local relations = require("open-related").find_related()
       pickers.new(opts or {}, {
         prompt_title = "Related files",

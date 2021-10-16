@@ -9,8 +9,8 @@ want to go to the test file or to the implementation, or go to the header file..
 
 ## Usage
 
-Open relations using vim command `OpenRelated` or `Telescope related`.
-Create relations using vim command `CreateRelated`.
+Open relations using vim command `OpenRelated` or `lua require("open-related").open_related()`.
+Create relations using vim command `CreateRelated` or `lua require("open-related").create_related()`.
 
 ## setup
 
@@ -24,7 +24,7 @@ use("gbprod/open-related", {
 })
 
 open_related = require('open-related')
-open_related.setup{}
+open_related.setup({})
 
 -- This will add a simple relation
 open_related.add_relation({
@@ -42,13 +42,21 @@ open_related.add_relation({
     opts = {},
 })
 ```
-
 The `related_to` function should return a table of : 
 
 ```lua
 {
-    file = "exact/match", -- If present, this is the path from cwd of an expected relation
+file = "exact/match", -- If present, this is the path from cwd of an expected relation
 }
+```
+
+### Setup structure
+
+```lua
+require('open-related').setup({
+    open_with = "telescope",
+    create_with = "inputlist",
+})
 ```
 
 ## Helpers
@@ -113,10 +121,9 @@ This will match : `src/Model/Product.php` <=> `tests/Model/ProductTest.php` and 
 
 ## Todo
 
- - Improve API using metatable
  - Improve finders (use qf or telescope)
+ - Improve creator (use telescope)
  - Symfony template rule
  - Php dependencies rules
  - vimdoc
  - approximative match using ripgrep
- - Support more than telescope

@@ -5,15 +5,45 @@ local Path = require("plenary.path")
 local M = {}
 
 M.state = {
-  config = {},
+  config = {
+    open_with = "telescope",
+    create_with = "inputlist",
+  },
   relations = {},
+  opener = nil,
+  creator = nil,
 }
 
-M.setup = function()
+M.setup = function(config)
   M.state.relations = Relations:new()
-  require("telescope").load_extension("related")
+  M.state.config = vim.tbl_deep_extend("force", M.state.config, config)
+
+  local success, opener = pcall(
+    require,
+    "open-related.opener." .. M.state.config.open_with
+  )
+  if not success then
+    print("OpenRelated: Invalid value for 'open_with' config")
+    return
+  end
+
+  opener.setup()
+  M.state.opener = opener
+
+  local success, creator = pcall(
+    require,
+    "open-related.creator." .. M.state.config.create_with
+  )
+  if not success then
+    print("OpenRelated: Invalid value for 'create_with' config")
+    return
+  end
+
+  creator.setup()
+  M.state.creator = creator
+
   vim.cmd([[
-    command! OpenRelated Telescope related
+    command! OpenRelated lua require("open-related").open_related()
     command! CreateRelated lua require("open-related").create_related()
   ]])
 end
@@ -33,19 +63,16 @@ M.find_related = function()
   return M.state.relations:resolve_related(vim.api.nvim_get_current_buf())
 end
 
+M.open_related = function()
+  M.state.opener.open()
+end
+
 M.create_related = function()
-  local creatable = M.state.relations:resolve_creatable(
-    vim.api.nvim_get_current_buf()
-  )
+  M.state.creator.create()
+end
 
-  local input = {}
-  for index, value in pairs(creatable) do
-    table.insert(input, index .. "." .. value.file)
-  end
-  local choice = vim.fn.inputlist(input)
-
-  Path:new(creatable[choice].file):touch({ parents = true })
-  vim.cmd(string.format("edit %s", creatable[choice].file))
+M.find_creatable = function()
+  return M.state.relations:resolve_creatable(vim.api.nvim_get_current_buf())
 end
 
 return M
