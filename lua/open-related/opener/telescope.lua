@@ -1,11 +1,13 @@
 local telescope = require("telescope")
 
 local setup = function()
-  telescope.load_extension("related")
+  telescope.load_extension("open_related")
 end
 
-local open = function()
-  telescope.extensions.related.open_related()
+local open = function(bufnr)
+  telescope.extensions.open_related.open_related({
+    bufnr = bufnr,
+  })
 end
 
 return {

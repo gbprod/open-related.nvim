@@ -2,8 +2,8 @@ local Path = require("plenary.path")
 
 local setup = function() end
 
-local create = function()
-  local creatable = require("open-related").find_creatable()
+local create = function(bufnr)
+  local creatable = require("open-related").relations:resolve_creatable(bufnr)
 
   local input = {}
   for index, value in pairs(creatable) do

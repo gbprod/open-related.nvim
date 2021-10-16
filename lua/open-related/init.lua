@@ -1,46 +1,39 @@
 local Relation = require("open-related.relation")
 local Relations = require("open-related.relations")
-local Path = require("plenary.path")
 
 local M = {}
 
-M.state = {
-  config = {
-    open_with = "telescope",
-    create_with = "inputlist",
-  },
-  relations = {},
-  opener = nil,
-  creator = nil,
+M.config = {
+  open_with = "telescope",
+  create_with = "inputlist",
 }
 
+M.relations = {}
+M.opener = nil
+M.creator = nil
+
 M.setup = function(config)
-  M.state.relations = Relations:new()
-  M.state.config = vim.tbl_deep_extend("force", M.state.config, config)
+  M.relations = Relations:new()
+  M.config = vim.tbl_deep_extend("force", M.config, config)
 
-  local success, opener = pcall(
-    require,
-    "open-related.opener." .. M.state.config.open_with
-  )
-  if not success then
-    print("OpenRelated: Invalid value for 'open_with' config")
-    return
+  local load = function(type, value)
+    local success, loaded = pcall(
+      require,
+      "open-related." .. type .. "." .. value
+    )
+
+    assert(
+      success,
+      "OpenRelated: Invalid value " .. value .. " for '" .. type .. "'"
+    )
+
+    loaded.setup()
+
+    return loaded
   end
 
-  opener.setup()
-  M.state.opener = opener
-
-  local success, creator = pcall(
-    require,
-    "open-related.creator." .. M.state.config.create_with
-  )
-  if not success then
-    print("OpenRelated: Invalid value for 'create_with' config")
-    return
-  end
-
-  creator.setup()
-  M.state.creator = creator
+  M.opener = load("opener", M.config.open_with)
+  M.creator = load("creator", M.config.create_with)
 
   vim.cmd([[
     command! OpenRelated lua require("open-related").open_related()
@@ -49,7 +42,7 @@ M.setup = function(config)
 end
 
 M.add_relation = function(options)
-  M.state.relations:add(
+  M.relations:add(
     Relation:new(
       options.filetypes,
       options.related_to,
@@ -59,20 +52,12 @@ M.add_relation = function(options)
   )
 end
 
-M.find_related = function()
-  return M.state.relations:resolve_related(vim.api.nvim_get_current_buf())
+M.open_related = function(bufnr)
+  M.opener.open(bufnr or vim.api.nvim_get_current_buf())
 end
 
-M.open_related = function()
-  M.state.opener.open()
-end
-
-M.create_related = function()
-  M.state.creator.create()
-end
-
-M.find_creatable = function()
-  return M.state.relations:resolve_creatable(vim.api.nvim_get_current_buf())
+M.create_related = function(bufnr)
+  M.creator.create(bufnr or vim.api.nvim_get_current_buf())
 end
 
 return M
