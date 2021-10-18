@@ -5,40 +5,38 @@ local M = {}
 
 M.config = {
   open_with = "telescope",
-  create_with = "inputlist",
+  create_with = "telescope",
 }
 
 M.relations = {}
-M.opener = nil
-M.creator = nil
+M.open = nil
+M.create = nil
 
 M.setup = function(config)
   M.relations = Relations:new()
   M.config = vim.tbl_deep_extend("force", M.config, config)
 
-  local load = function(type, value)
-    local success, loaded = pcall(
-      require,
-      "open-related." .. type .. "." .. value
-    )
-
-    assert(
-      success,
-      "OpenRelated: Invalid value " .. value .. " for '" .. type .. "'"
-    )
-
-    loaded.setup()
-
-    return loaded
-  end
-
-  M.opener = load("opener", M.config.open_with)
-  M.creator = load("creator", M.config.create_with)
+  M.open = M.load("opener", M.config.open_with)
+  M.create = M.load("creator", M.config.create_with)
 
   vim.cmd([[
     command! OpenRelated lua require("open-related").open_related()
     command! CreateRelated lua require("open-related").create_related()
   ]])
+end
+
+M.load = function(type, value)
+  local success, loaded = pcall(
+    require,
+    "open-related." .. type .. "." .. value
+  )
+
+  assert(
+    success,
+    "OpenRelated: Invalid value " .. value .. " for '" .. type .. "'"
+  )
+
+  return loaded
 end
 
 M.add_relation = function(options)
@@ -52,12 +50,38 @@ M.add_relation = function(options)
   )
 end
 
-M.open_related = function(bufnr)
-  M.opener.open(bufnr or vim.api.nvim_get_current_buf())
+M.open_related = function(bufnr, opts)
+  local relations = M.relations:resolve_related(
+    bufnr or vim.api.nvim_get_current_buf()
+  )
+
+  if vim.tbl_isempty(relations) then
+    print("No related file found")
+    return
+  end
+
+  if opts ~= nil and opts.open_with ~= nil then
+    M.load("opener", opts.open_with)(relations)
+  end
+
+  M.open(relations)
 end
 
-M.create_related = function(bufnr)
-  M.creator.create(bufnr or vim.api.nvim_get_current_buf())
+M.create_related = function(bufnr, opts)
+  local relations = M.relations:resolve_creatable(
+    bufnr or vim.api.nvim_get_current_buf()
+  )
+
+  if vim.tbl_isempty(relations) then
+    print("No creatable file found")
+    return
+  end
+
+  if opts ~= nil and opts.create_with ~= nil then
+    M.load("creator", opts.create_with)(relations)
+  end
+
+  M.create(relations)
 end
 
 return M

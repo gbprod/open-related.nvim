@@ -55,7 +55,7 @@ file = "exact/match", -- If present, this is the path from cwd of an expected re
 ```lua
 require('open-related').setup({
     open_with = "telescope",
-    create_with = "inputlist",
+    create_with = "telescope", -- or "inputlist"
 })
 ```
 
