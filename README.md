@@ -1,5 +1,7 @@
 # open-related.nvim
-Draft - Quickly open related files in neovim using Telescope
+
+Quickly open related files in neovim.
+
 Work in progress, API could change.
 
 ## Motivation
@@ -54,8 +56,8 @@ file = "exact/match", -- If present, this is the path from cwd of an expected re
 
 ```lua
 require('open-related').setup({
-    open_with = "telescope",
-    create_with = "telescope", -- or "inputlist"
+    open_with = "qflist", -- or telescope
+    create_with = "inputlist", -- or telescope
 })
 ```
 
@@ -119,11 +121,3 @@ open_related.add_relation(
 ```
 This will match : `src/Model/Product.php` <=> `tests/Model/ProductTest.php` and `tests/Unit/Model/ProductTest.php` and `tests/Integration/Model/ProductTest.php` 
 
-## Todo
-
- - Improve finders (use qf or telescope)
- - Improve creator (use telescope)
- - Symfony template rule
- - Php dependencies rules
- - vimdoc
- - approximative match using ripgrep

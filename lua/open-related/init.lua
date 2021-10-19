@@ -4,8 +4,8 @@ local Relations = require("open-related.relations")
 local M = {}
 
 M.config = {
-  open_with = "telescope",
-  create_with = "telescope",
+  open_with = "qflist",
+  create_with = "inputlist",
 }
 
 M.relations = {}
