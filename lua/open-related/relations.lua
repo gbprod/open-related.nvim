@@ -16,17 +16,13 @@ end
 function Relations:resolve_related(bufnr)
   return vim.tbl_filter(function(entry)
     return Path:new(entry.file):exists()
-  end, self:resolve(
-    bufnr
-  ))
+  end, self:resolve(bufnr))
 end
 
 function Relations:resolve_creatable(bufnr)
   return vim.tbl_values(vim.tbl_filter(function(entry)
     return not Path:new(entry.file):exists()
-  end, self:resolve(
-    bufnr
-  )))
+  end, self:resolve(bufnr)))
 end
 
 function Relations:resolve(bufnr)

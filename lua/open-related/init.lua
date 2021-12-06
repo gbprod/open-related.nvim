@@ -26,34 +26,19 @@ M.setup = function(config)
 end
 
 M.load = function(type, value)
-  local success, loaded = pcall(
-    require,
-    "open-related." .. type .. "." .. value
-  )
+  local success, loaded = pcall(require, "open-related." .. type .. "." .. value)
 
-  assert(
-    success,
-    "OpenRelated: Invalid value " .. value .. " for '" .. type .. "'"
-  )
+  assert(success, "OpenRelated: Invalid value " .. value .. " for '" .. type .. "'")
 
   return loaded
 end
 
 M.add_relation = function(options)
-  M.relations:add(
-    Relation:new(
-      options.filetypes,
-      options.related_to,
-      options.condition or nil,
-      options.opts or nil
-    )
-  )
+  M.relations:add(Relation:new(options.filetypes, options.related_to, options.condition or nil, options.opts or nil))
 end
 
 M.open_related = function(bufnr, opts)
-  local relations = M.relations:resolve_related(
-    bufnr or vim.api.nvim_get_current_buf()
-  )
+  local relations = M.relations:resolve_related(bufnr or vim.api.nvim_get_current_buf())
 
   if vim.tbl_isempty(relations) then
     print("No related file found")
@@ -68,9 +53,7 @@ M.open_related = function(bufnr, opts)
 end
 
 M.create_related = function(bufnr, opts)
-  local relations = M.relations:resolve_creatable(
-    bufnr or vim.api.nvim_get_current_buf()
-  )
+  local relations = M.relations:resolve_creatable(bufnr or vim.api.nvim_get_current_buf())
 
   if vim.tbl_isempty(relations) then
     print("No creatable file found")

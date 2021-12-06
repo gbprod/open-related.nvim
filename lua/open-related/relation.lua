@@ -5,10 +5,7 @@ local Relation = Object:extend()
 function Relation:new(filetypes, related_to, condition, opts)
   assert(type(filetypes) == "table", "filetypes should be a table")
   assert(type(related_to) == "function", "related_to should be a function")
-  assert(
-    type(condition) == "function" or condition == nil,
-    "condition should be a function or nil"
-  )
+  assert(type(condition) == "function" or condition == nil, "condition should be a function or nil")
   assert(type(opts) == "table" or opts == nil, "Opts should be a table or nil")
 
   return setmetatable({

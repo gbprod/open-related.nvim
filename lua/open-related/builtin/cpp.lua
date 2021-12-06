@@ -6,8 +6,8 @@ local M = {}
 M.alternate_header = helpers.make_builtin({
   filetypes = { "cpp" },
   related_to = filename.from_patterns({
-    ["(.*).h$"] = "%s.cpp",
-    ["(.*).cpp$"] = "%s.h",
+    { match = "(.*).h$", format = "%s.cpp" },
+    { match = "(.*).cpp$", format = "%s.h" },
   }),
 })
 

@@ -14,11 +14,7 @@ M.make_builtin = function(opts)
     builtin.filetypes = user_opts.filetypes or builtin.filetypes
     builtin.related_to = user_opts.related_to or builtin.related_to
     builtin.condition = user_opts.condition or builtin.condition
-    builtin.opts = vim.tbl_deep_extend(
-      "force",
-      builtin.opts,
-      user_opts.opts or {}
-    )
+    builtin.opts = vim.tbl_deep_extend("force", builtin.opts, user_opts.opts or {})
 
     return builtin
   end
