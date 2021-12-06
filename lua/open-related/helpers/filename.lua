@@ -20,11 +20,7 @@ M.from_patterns = function(patterns)
     local matches = {}
     local filename = M.get_buffer_filename(bufnr)
     for _, pattern in pairs(patterns) do
-      local tranformed = M.match_and_format(
-        filename,
-        pattern.match,
-        pattern.format
-      )
+      local tranformed = M.match_and_format(filename, pattern.match, pattern.format)
 
       if tranformed ~= nil then
         table.insert(matches, {
