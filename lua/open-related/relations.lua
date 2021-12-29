@@ -31,7 +31,9 @@ function Relations:resolve(bufnr)
 
   for _, relation in pairs(self.relations) do
     if relation:filetype_matches(ft) and relation:should_run(bufnr) then
-      related = table.merge(related, relation:resolve(bufnr))
+      for _, value in pairs(relation:resolve(bufnr)) do
+        table.insert(related, value)
+      end
     end
   end
 
